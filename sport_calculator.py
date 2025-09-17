@@ -3,7 +3,10 @@ import pandas as pd
 import plotly.express as px
 import score_criteria as sc
 
+SPORT_IMAGE_URL = "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80"
+
 # streamlit ui
+st.image(SPORT_IMAGE_URL, caption="为运动加油！", use_column_width=True)
 gender = st.selectbox("性别", ["男", "女"])
 grade = st.selectbox("年级", [1, 2, 3, 4, 5, 6])
 weight = st.number_input("体重(千克)", min_value=0.0, step=0.1)
