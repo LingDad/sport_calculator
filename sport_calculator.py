@@ -29,11 +29,12 @@ st.markdown("""
         text-align: center;
         padding: 0.2rem 0 0.5rem 0;
     }
-    .section-label {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #555;
-        margin: 0.8rem 0 0.2rem 0;
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 1.5rem 0 0.5rem 0;
+        padding-bottom: 0.3rem;
+        border-bottom: 2px solid #ff4b4b;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -47,7 +48,7 @@ st.caption("依据《国家学生体质健康标准》（2024年修订）")
 # ============================================================
 # 基本信息
 # ============================================================
-st.header("📋 基本信息")
+st.markdown('<div class="section-title">📋 基本信息</div>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 with col1:
     gender = st.selectbox("性别", ["男", "女"], key="gender")
@@ -58,7 +59,7 @@ with col2:
 # ============================================================
 # 测试项目输入
 # ============================================================
-st.header("📏 测试数据")
+st.markdown('<div class="section-title">📏 测试数据</div>', unsafe_allow_html=True)
 
 # --- 身体形态 ---
 st.markdown("**🏋️ 身体形态（BMI）**")
@@ -142,7 +143,7 @@ if st.button("🧮 计算体测成绩", type="primary", use_container_width=True
     bmi_value = weight / (height ** 2) if height > 0 else 0
 
     # --- 显示结果 ---
-    st.header("📊 测试结果")
+    st.markdown('<div class="section-title">📊 测试结果</div>', unsafe_allow_html=True)
 
     # 总分大字
     st.markdown(f'<div class="big-score">{final}</div>', unsafe_allow_html=True)
