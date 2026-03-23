@@ -1,26 +1,35 @@
-# 2024 score criteria for grade 1-6 Physical Fitness Test and the function to calculate the score
+# 2024 小学生体质健康测试评分标准
+# 数据来源：国家学生体质健康标准（2024年修订）
 
-# Define the BMI ranges for each grade
-male_bmi_ranges = {
-    1: {'normal': (13.5, 18.1), 'underweight': 13.4, 'overweight': (18.2, 20.3), 'obese': 20.4},
-    2: {'normal': (13.7, 18.4), 'underweight': 13.6, 'overweight': (18.5, 20.4), 'obese': 20.5},
-    3: {'normal': (13.9, 19.4), 'underweight': 13.8, 'overweight': (19.5, 22.1), 'obese': 22.2},
-    4: {'normal': (14.2, 20.1), 'underweight': 14.1, 'overweight': (20.2, 22.6), 'obese': 22.7},
-    5: {'normal': (14.4, 21.4), 'underweight': 14.3, 'overweight': (21.5, 24.1), 'obese': 24.2},
-    6: {'normal': (14.7, 21.8), 'underweight': 14.6, 'overweight': (21.9, 24.5), 'obese': 24.6}
+# ============================================================
+# BMI 评分表（单位：千克/米²）
+# 等级：正常=100, 低体重=80, 超重=80, 肥胖=60
+# ============================================================
+
+MALE_BMI = {
+    1: {"normal": (13.5, 18.1), "underweight_max": 13.4, "overweight": (18.2, 20.3), "obese_min": 20.4},
+    2: {"normal": (13.7, 18.4), "underweight_max": 13.6, "overweight": (18.5, 20.4), "obese_min": 20.5},
+    3: {"normal": (13.9, 19.4), "underweight_max": 13.8, "overweight": (19.5, 22.1), "obese_min": 22.2},
+    4: {"normal": (14.2, 20.1), "underweight_max": 14.1, "overweight": (20.2, 22.6), "obese_min": 22.7},
+    5: {"normal": (14.4, 21.4), "underweight_max": 14.3, "overweight": (21.5, 24.1), "obese_min": 24.2},
+    6: {"normal": (14.7, 21.8), "underweight_max": 14.6, "overweight": (21.9, 24.5), "obese_min": 24.6},
 }
 
-female_bmi_ranges = {
-    1: {'normal': (13.3, 17.3), 'underweight': 13.2, 'overweight': (17.4, 19.2), 'obese': 19.3},
-    2: {'normal': (13.5, 17.8), 'underweight': 13.4, 'overweight': (17.9, 20.2), 'obese': 20.3},
-    3: {'normal': (13.6, 18.6), 'underweight': 13.5, 'overweight': (18.7, 21.1), 'obese': 21.2},
-    4: {'normal': (13.7, 19.4), 'underweight': 13.6, 'overweight': (19.5, 22.0), 'obese': 22.1},
-    5: {'normal': (13.8, 20.5), 'underweight': 13.7, 'overweight': (20.6, 22.9), 'obese': 23.0},
-    6: {'normal': (14.2, 20.8), 'underweight': 14.1, 'overweight': (20.9, 23.6), 'obese': 23.7}
+FEMALE_BMI = {
+    1: {"normal": (13.3, 17.3), "underweight_max": 13.2, "overweight": (17.4, 19.2), "obese_min": 19.3},
+    2: {"normal": (13.5, 17.8), "underweight_max": 13.4, "overweight": (17.9, 20.2), "obese_min": 20.3},
+    3: {"normal": (13.6, 18.6), "underweight_max": 13.5, "overweight": (18.7, 21.1), "obese_min": 21.2},
+    4: {"normal": (13.7, 19.4), "underweight_max": 13.6, "overweight": (19.5, 22.0), "obese_min": 22.1},
+    5: {"normal": (13.8, 20.5), "underweight_max": 13.7, "overweight": (20.6, 22.9), "obese_min": 23.0},
+    6: {"normal": (14.2, 20.8), "underweight_max": 14.1, "overweight": (20.9, 23.6), "obese_min": 23.7},
 }
 
-# Define the lung capacity ranges for each grade
-male_capacity_ranges = {
+# ============================================================
+# 肺活量评分表（单位：毫升）
+# 高优指标：值越大分越高
+# ============================================================
+
+MALE_LUNG = {
     1: {100: 1700, 95: 1600, 90: 1500, 85: 1400, 80: 1300, 78: 1240, 76: 1180, 74: 1120, 72: 1060, 70: 1000,
         68: 940, 66: 880, 64: 820, 62: 760, 60: 700, 50: 660, 40: 620, 30: 580, 20: 540, 10: 500},
     2: {100: 2000, 95: 1900, 90: 1800, 85: 1650, 80: 1500, 78: 1430, 76: 1360, 74: 1290, 72: 1220, 70: 1150,
@@ -32,10 +41,10 @@ male_capacity_ranges = {
     5: {100: 2900, 95: 2800, 90: 2700, 85: 2450, 80: 2200, 78: 2110, 76: 2020, 74: 1930, 72: 1840, 70: 1750,
         68: 1660, 66: 1570, 64: 1480, 62: 1390, 60: 1300, 50: 1220, 40: 1140, 30: 1060, 20: 980, 10: 900},
     6: {100: 3200, 95: 3100, 90: 3000, 85: 2750, 80: 2500, 78: 2400, 76: 2300, 74: 2200, 72: 2100, 70: 2000,
-        68: 1900, 66: 1800, 64: 1700, 62: 1600, 60: 1500, 50: 1410, 40: 1320, 30: 1230, 20: 1140, 10: 1050}
+        68: 1900, 66: 1800, 64: 1700, 62: 1600, 60: 1500, 50: 1410, 40: 1320, 30: 1230, 20: 1140, 10: 1050},
 }
 
-female_capacity_ranges = {
+FEMALE_LUNG = {
     1: {100: 1400, 95: 1300, 90: 1200, 85: 1100, 80: 1000, 78: 960, 76: 920, 74: 880, 72: 840, 70: 800,
         68: 760, 66: 720, 64: 680, 62: 640, 60: 600, 50: 580, 40: 560, 30: 540, 20: 520, 10: 500},
     2: {100: 1600, 95: 1500, 90: 1400, 85: 1300, 80: 1200, 78: 1150, 76: 1100, 74: 1050, 72: 1000, 70: 950,
@@ -45,13 +54,17 @@ female_capacity_ranges = {
     4: {100: 2000, 95: 1900, 90: 1800, 85: 1700, 80: 1600, 78: 1530, 76: 1460, 74: 1390, 72: 1320, 70: 1250,
         68: 1180, 66: 1110, 64: 1040, 62: 970, 60: 900, 50: 880, 40: 860, 30: 840, 20: 820, 10: 800},
     5: {100: 2250, 95: 2150, 90: 2050, 85: 1950, 80: 1850, 78: 1770, 76: 1690, 74: 1610, 72: 1530, 70: 1450,
-        68: 1370, 66: 1290, 64: 1210, 62: 1130, 60: 1050, 50: 1020, 40: 1140, 30: 1110, 20: 930, 10: 900},
+        68: 1370, 66: 1290, 64: 1210, 62: 1130, 60: 1050, 50: 1020, 40: 990, 30: 960, 20: 930, 10: 900},
     6: {100: 2500, 95: 2400, 90: 2300, 85: 2200, 80: 2100, 78: 2010, 76: 1920, 74: 1830, 72: 1740, 70: 1650,
-        68: 1560, 66: 1470, 64: 1380, 62: 1290, 60: 1200, 50: 1170, 40: 1140, 30: 1110, 20: 1080, 10: 1050}
+        68: 1560, 66: 1470, 64: 1380, 62: 1290, 60: 1200, 50: 1170, 40: 1140, 30: 1110, 20: 1080, 10: 1050},
 }
 
-# Define the 50m run time ranges for each grade
-male_run_time_ranges = {
+# ============================================================
+# 50米跑评分表（单位：秒）
+# 低优指标：时间越短分越高
+# ============================================================
+
+MALE_RUN50 = {
     1: {100: 10.2, 95: 10.3, 90: 10.4, 85: 10.5, 80: 10.6, 78: 10.8, 76: 11.0, 74: 11.2, 72: 11.4, 70: 11.6,
         68: 11.8, 66: 12.0, 64: 12.2, 62: 12.4, 60: 12.6, 50: 12.8, 40: 13.0, 30: 13.2, 20: 13.4, 10: 13.6},
     2: {100: 9.6, 95: 9.7, 90: 9.8, 85: 9.9, 80: 10.0, 78: 10.2, 76: 10.4, 74: 10.6, 72: 10.8, 70: 11.0,
@@ -63,10 +76,10 @@ male_run_time_ranges = {
     5: {100: 8.4, 95: 8.5, 90: 8.6, 85: 8.7, 80: 8.8, 78: 9.0, 76: 9.2, 74: 9.4, 72: 9.6, 70: 9.8,
         68: 10.0, 66: 10.2, 64: 10.4, 62: 10.6, 60: 10.8, 50: 11.0, 40: 11.2, 30: 11.4, 20: 11.6, 10: 11.8},
     6: {100: 8.2, 95: 8.3, 90: 8.4, 85: 8.5, 80: 8.6, 78: 8.8, 76: 9.0, 74: 9.2, 72: 9.4, 70: 9.6,
-        68: 9.8, 66: 10.0, 64: 10.2, 62: 10.4, 60: 10.6, 50: 10.8, 40: 11.0, 30: 11.2, 20: 11.4, 10: 11.6}
+        68: 9.8, 66: 10.0, 64: 10.2, 62: 10.4, 60: 10.6, 50: 10.8, 40: 11.0, 30: 11.2, 20: 11.4, 10: 11.6},
 }
 
-female_run_time_ranges = {
+FEMALE_RUN50 = {
     1: {100: 11.0, 95: 11.1, 90: 11.2, 85: 11.5, 80: 11.8, 78: 12.0, 76: 12.2, 74: 12.4, 72: 12.6, 70: 12.8,
         68: 13.0, 66: 13.2, 64: 13.4, 62: 13.6, 60: 13.8, 50: 14.0, 40: 14.2, 30: 14.4, 20: 14.6, 10: 14.8},
     2: {100: 10.0, 95: 10.1, 90: 10.2, 85: 10.5, 80: 10.8, 78: 11.0, 76: 11.2, 74: 11.4, 72: 11.6, 70: 11.8,
@@ -78,11 +91,15 @@ female_run_time_ranges = {
     5: {100: 8.3, 95: 8.4, 90: 8.5, 85: 8.8, 80: 9.1, 78: 9.3, 76: 9.5, 74: 9.7, 72: 9.9, 70: 10.1,
         68: 10.3, 66: 10.5, 64: 10.7, 62: 10.9, 60: 11.1, 50: 11.3, 40: 11.5, 30: 11.7, 20: 11.9, 10: 12.1},
     6: {100: 8.2, 95: 8.3, 90: 8.4, 85: 8.7, 80: 9.0, 78: 9.2, 76: 9.4, 74: 9.6, 72: 9.8, 70: 10.0,
-        68: 10.2, 66: 10.4, 64: 10.6, 62: 10.8, 60: 11.0, 50: 11.2, 40: 11.4, 30: 11.6, 20: 11.8, 10: 12.0}
+        68: 10.2, 66: 10.4, 64: 10.6, 62: 10.8, 60: 11.0, 50: 11.2, 40: 11.4, 30: 11.6, 20: 11.8, 10: 12.0},
 }
 
-# Define the sit and reach ranges for each grade
-male_reach_ranges = {
+# ============================================================
+# 坐位体前屈评分表（单位：厘米）
+# 高优指标：值越大分越高
+# ============================================================
+
+MALE_SIT_REACH = {
     1: {100: 16.1, 95: 14.6, 90: 13.0, 85: 12.0, 80: 11.0, 78: 9.9, 76: 8.8, 74: 7.7, 72: 6.6, 70: 5.5,
         68: 4.4, 66: 3.3, 64: 2.2, 62: 1.1, 60: 0.0, 50: -0.8, 40: -1.6, 30: -2.4, 20: -3.2, 10: -4.0},
     2: {100: 16.2, 95: 14.7, 90: 13.2, 85: 11.9, 80: 10.6, 78: 9.5, 76: 8.4, 74: 7.3, 72: 6.2, 70: 5.1,
@@ -94,10 +111,10 @@ male_reach_ranges = {
     5: {100: 16.5, 95: 15.2, 90: 13.8, 85: 11.6, 80: 9.4, 78: 8.2, 76: 7.0, 74: 5.8, 72: 4.6, 70: 3.4,
         68: 2.2, 66: 1.0, 64: -0.2, 62: -1.4, 60: -2.6, 50: -3.6, 40: -4.6, 30: -5.6, 20: -6.6, 10: -7.6},
     6: {100: 16.6, 95: 15.3, 90: 14.0, 85: 11.5, 80: 9.0, 78: 7.7, 76: 6.4, 74: 5.1, 72: 3.8, 70: 2.5,
-        68: 1.2, 66: -0.1, 64: -1.4, 62: -2.7, 60: -4.0, 50: -5.0, 40: -6.0, 30: -7.0, 20: -8.0, 10: -9.0}
+        68: 1.2, 66: -0.1, 64: -1.4, 62: -2.7, 60: -4.0, 50: -5.0, 40: -6.0, 30: -7.0, 20: -8.0, 10: -9.0},
 }
 
-female_reach_ranges = {
+FEMALE_SIT_REACH = {
     1: {100: 18.6, 95: 17.3, 90: 16.0, 85: 14.7, 80: 13.4, 78: 12.3, 76: 11.2, 74: 10.1, 72: 9.0, 70: 7.9,
         68: 6.8, 66: 5.7, 64: 4.6, 62: 3.5, 60: 2.4, 50: 1.6, 40: 0.8, 30: 0.0, 20: -0.8, 10: -1.6},
     2: {100: 18.9, 95: 17.6, 90: 16.3, 85: 14.8, 80: 13.3, 78: 12.2, 76: 11.1, 74: 10.0, 72: 8.9, 70: 7.8,
@@ -105,15 +122,19 @@ female_reach_ranges = {
     3: {100: 19.2, 95: 17.9, 90: 16.6, 85: 14.9, 80: 13.2, 78: 12.1, 76: 11.0, 74: 9.9, 72: 8.8, 70: 7.7,
         68: 6.6, 66: 5.5, 64: 4.4, 62: 3.3, 60: 2.2, 50: 1.4, 40: 0.6, 30: -0.2, 20: -1.0, 10: -1.8},
     4: {100: 19.5, 95: 18.1, 90: 16.9, 85: 15.0, 80: 13.1, 78: 12.0, 76: 10.9, 74: 9.8, 72: 8.7, 70: 7.6,
-        68: 6.5, 66: 5.4, 64: 4.3, 62: 3.2, 60: 2.1, 50: 1.3, 40: 0.5, 30: -0.4, 20: -1.1, 10: -1.9},
+        68: 6.5, 66: 5.4, 64: 4.3, 62: 3.2, 60: 2.1, 50: 1.3, 40: 0.5, 30: -0.3, 20: -1.1, 10: -1.9},
     5: {100: 19.8, 95: 18.5, 90: 17.2, 85: 15.1, 80: 13.0, 78: 11.9, 76: 10.8, 74: 9.7, 72: 8.6, 70: 7.5,
-        68: 6.4, 66: 5.3, 64: 4.2, 62: 3.1, 60: 2.0, 50: 1.2, 40: 0.4, 30: -1.2, 20: -1.3, 10: -2.0},
+        68: 6.4, 66: 5.3, 64: 4.2, 62: 3.1, 60: 2.0, 50: 1.2, 40: 0.4, 30: -0.4, 20: -1.2, 10: -2.0},
     6: {100: 19.9, 95: 18.7, 90: 17.5, 85: 15.2, 80: 12.9, 78: 11.8, 76: 10.7, 74: 9.6, 72: 8.5, 70: 7.4,
-        68: 6.3, 66: 5.2, 64: 4.1, 62: 3.0, 60: 1.9, 50: 1.1, 40: 0.3, 30: -0.5, 20: -1.1, 10: -2.1}
+        68: 6.3, 66: 5.2, 64: 4.1, 62: 3.0, 60: 1.9, 50: 1.1, 40: 0.3, 30: -0.5, 20: -1.3, 10: -2.1},
 }
 
-# Define the jump rope score ranges for each grade
-male_jump_score_ranges = {
+# ============================================================
+# 一分钟跳绳评分表（单位：次）
+# 高优指标：次数越多分越高
+# ============================================================
+
+MALE_JUMP_ROPE = {
     1: {100: 109, 95: 104, 90: 99, 85: 93, 80: 87, 78: 80, 76: 73, 74: 66, 72: 59, 70: 52,
         68: 45, 66: 38, 64: 31, 62: 24, 60: 17, 50: 14, 40: 11, 30: 8, 20: 5, 10: 2},
     2: {100: 117, 95: 112, 90: 107, 85: 101, 80: 95, 78: 88, 76: 81, 74: 74, 72: 67, 70: 60,
@@ -125,10 +146,10 @@ male_jump_score_ranges = {
     5: {100: 148, 95: 143, 90: 138, 85: 132, 80: 126, 78: 119, 76: 112, 74: 105, 72: 98, 70: 91,
         68: 84, 66: 77, 64: 70, 62: 63, 60: 56, 50: 53, 40: 50, 30: 47, 20: 44, 10: 41},
     6: {100: 157, 95: 152, 90: 147, 85: 141, 80: 135, 78: 128, 76: 121, 74: 114, 72: 107, 70: 100,
-        68: 93, 66: 86, 64: 79, 62: 72, 60: 65, 50: 62, 40: 59, 30: 56, 20: 53, 10: 50}
+        68: 93, 66: 86, 64: 79, 62: 72, 60: 65, 50: 62, 40: 59, 30: 56, 20: 53, 10: 50},
 }
 
-female_jump_score_ranges = {
+FEMALE_JUMP_ROPE = {
     1: {100: 117, 95: 110, 90: 103, 85: 95, 80: 87, 78: 80, 76: 73, 74: 66, 72: 59, 70: 52,
         68: 45, 66: 38, 64: 31, 62: 24, 60: 17, 50: 14, 40: 11, 30: 8, 20: 5, 10: 2},
     2: {100: 127, 95: 120, 90: 113, 85: 105, 80: 97, 78: 90, 76: 83, 74: 76, 72: 69, 70: 62,
@@ -140,42 +161,27 @@ female_jump_score_ranges = {
     5: {100: 158, 95: 151, 90: 144, 85: 136, 80: 128, 78: 121, 76: 114, 74: 107, 72: 100, 70: 93,
         68: 86, 66: 79, 64: 72, 62: 65, 60: 58, 50: 55, 40: 52, 30: 49, 20: 46, 10: 43},
     6: {100: 166, 95: 159, 90: 152, 85: 144, 80: 136, 78: 129, 76: 122, 74: 115, 72: 108, 70: 101,
-        68: 94, 66: 87, 64: 80, 62: 73, 60: 66, 50: 63, 40: 60, 30: 57, 20: 54, 10: 51}
+        68: 94, 66: 87, 64: 80, 62: 73, 60: 66, 50: 63, 40: 60, 30: 57, 20: 54, 10: 51},
 }
 
-# Define the jump rope bonus ranges for each grade
-male_bonus_ranges = {
-    1: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
-        10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    2: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
-        10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    3: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
-        10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    4: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
-        10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    5: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
-        10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    6: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
-        10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2}
+# ============================================================
+# 一分钟跳绳加分表（单位：次）
+# 超过100分对应的满分次数后，每多跳对应次数加对应分
+# 加分与年级、性别有关（实际上各年级加分梯度相同）
+# ============================================================
+
+JUMP_ROPE_BONUS = {
+    20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22,
+    10: 20, 9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2,
 }
 
-female_bonus_ranges = {
-    1: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22, 10: 20,
-        9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    2: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22, 10: 20,
-        9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    3: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22, 10: 20,
-        9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    4: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22, 10: 20,
-        9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    5: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22, 10: 20,
-        9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2},
-    6: {20: 40, 19: 38, 18: 36, 17: 34, 16: 32, 15: 30, 14: 28, 13: 26, 12: 24, 11: 22, 10: 20,
-        9: 18, 8: 16, 7: 14, 6: 12, 5: 10, 4: 8, 3: 6, 2: 4, 1: 2}
-}
+# ============================================================
+# 仰卧起坐评分表（单位：次）—— 仅3-6年级
+# 高优指标：次数越多分越高
+# 注意：图片中未提供仰卧起坐数据，沿用原有标准
+# ============================================================
 
-# Define the sit-up score ranges for each grade
-male_sit_up_score_ranges = {
+MALE_SIT_UP = {
     3: {100: 48, 95: 45, 90: 42, 85: 39, 80: 36, 78: 34, 76: 32, 74: 30, 72: 28, 70: 26,
         68: 24, 66: 22, 64: 20, 62: 18, 60: 16, 50: 14, 40: 12, 30: 10, 20: 8, 10: 6},
     4: {100: 49, 95: 46, 90: 43, 85: 40, 80: 37, 78: 35, 76: 33, 74: 31, 72: 29, 70: 27,
@@ -183,10 +189,10 @@ male_sit_up_score_ranges = {
     5: {100: 50, 95: 47, 90: 44, 85: 41, 80: 38, 78: 36, 76: 34, 74: 32, 72: 30, 70: 28,
         68: 26, 66: 24, 64: 22, 62: 20, 60: 18, 50: 16, 40: 14, 30: 12, 20: 10, 10: 8},
     6: {100: 51, 95: 48, 90: 45, 85: 42, 80: 39, 78: 37, 76: 35, 74: 33, 72: 31, 70: 29,
-        68: 27, 66: 25, 64: 23, 62: 21, 60: 19, 50: 17, 40: 15, 30: 13, 20: 11, 10: 9}
+        68: 27, 66: 25, 64: 23, 62: 21, 60: 19, 50: 17, 40: 15, 30: 13, 20: 11, 10: 9},
 }
 
-female_sit_up_score_ranges = {
+FEMALE_SIT_UP = {
     3: {100: 46, 95: 44, 90: 42, 85: 39, 80: 36, 78: 34, 76: 32, 74: 30, 72: 28, 70: 26,
         68: 24, 66: 22, 64: 20, 62: 18, 60: 16, 50: 14, 40: 12, 30: 10, 20: 8, 10: 6},
     4: {100: 47, 95: 45, 90: 43, 85: 40, 80: 37, 78: 35, 76: 33, 74: 31, 72: 29, 70: 27,
@@ -194,206 +200,162 @@ female_sit_up_score_ranges = {
     5: {100: 48, 95: 46, 90: 44, 85: 41, 80: 38, 78: 36, 76: 34, 74: 32, 72: 30, 70: 28,
         68: 26, 66: 24, 64: 22, 62: 20, 60: 18, 50: 16, 40: 14, 30: 12, 20: 10, 10: 8},
     6: {100: 49, 95: 47, 90: 45, 85: 42, 80: 39, 78: 37, 76: 35, 74: 33, 72: 31, 70: 29,
-        68: 27, 66: 25, 64: 23, 62: 21, 60: 19, 50: 17, 40: 15, 30: 13, 20: 11, 10: 9}
+        68: 27, 66: 25, 64: 23, 62: 21, 60: 19, 50: 17, 40: 15, 30: 13, 20: 11, 10: 9},
 }
 
-# Define the 50m x 8 shuttle run score ranges for each grade
-male_run_score_ranges = {
-    5: {100: "1'36\"", 95: "1'39\"", 90: "1'42\"", 85: "1'45\"", 80: "1'48\"", 78: "1'51\"", 76: "1'54\"", 74: "1'57\"", 72: "2'00\"", 70: "2'03\"",
-        68: "2'06\"", 66: "2'09\"", 64: "2'12\"", 62: "2'15\"", 60: "2'18\"", 50: "2'22\"", 40: "2'26\"", 30: "2'30\"", 20: "2'34\"", 10: "2'38\""},
-    6: {100: "1'30\"", 95: "1'33\"", 90: "1'36\"", 85: "1'39\"", 80: "1'42\"", 78: "1'45\"", 76: "1'48\"", 74: "1'51\"", 72: "1'54\"", 70: "1'57\"",
-        68: "2'00\"", 66: "2'03\"", 64: "2'06\"", 62: "2'09\"", 60: "2'12\"", 50: "2'16\"", 40: "2'20\"", 30: "2'24\"", 20: "2'28\"", 10: "2'32\""}
-}
-female_run_score_ranges = {
-    5: {100: "1'41\"", 95: "1'44\"", 90: "1'47\"", 85: "1'50\"", 80: "1'53\"", 78: "1'56\"", 76: "1'59\"", 74: "2'02\"", 72: "2'05\"", 70: "2'08\"", 68: "2'11\"", 66: "2'14\"", 64: "2'17\"", 62: "2'20\"", 60: "2'23\"", 50: "2'27\"", 40: "2'31\"", 30: "2'35\"", 20: "2'39\"", 10: "2'43\""},
-    6: {100: "1'37\"", 95: "1'40\"", 90: "1'43\"", 85: "1'46\"", 80: "1'49\"", 78: "1'52\"", 76: "1'55\"", 74: "1'58\"", 72: "2'01\"", 70: "2'04\"", 68: "2'07\"", 66: "2'10\"", 64: "2'13\"", 62: "2'16\"", 60: "2'19\"", 50: "2'23\"", 40: "2'27\"", 30: "2'31\"", 20: "2'35\"", 10: "2'39\""}
+# ============================================================
+# 50米×8往返跑评分表（单位：秒）—— 仅5-6年级
+# 低优指标：时间越短分越高
+# 存储为总秒数
+# ============================================================
+
+MALE_RUN8 = {
+    5: {100: 96, 95: 99, 90: 102, 85: 105, 80: 108, 78: 111, 76: 114, 74: 117, 72: 120, 70: 123,
+        68: 126, 66: 129, 64: 132, 62: 135, 60: 138, 50: 142, 40: 146, 30: 150, 20: 154, 10: 158},
+    6: {100: 90, 95: 93, 90: 96, 85: 99, 80: 102, 78: 105, 76: 108, 74: 111, 72: 114, 70: 117,
+        68: 120, 66: 123, 64: 126, 62: 129, 60: 132, 50: 136, 40: 140, 30: 144, 20: 148, 10: 152},
 }
 
-def calculate_bmi(weight, height):
-    if height <= 0:
+FEMALE_RUN8 = {
+    5: {100: 101, 95: 104, 90: 107, 85: 110, 80: 113, 78: 116, 76: 119, 74: 122, 72: 125, 70: 128,
+        68: 131, 66: 134, 64: 137, 62: 140, 60: 143, 50: 147, 40: 151, 30: 155, 20: 159, 10: 163},
+    6: {100: 97, 95: 100, 90: 103, 85: 106, 80: 109, 78: 112, 76: 115, 74: 118, 72: 121, 70: 124,
+        68: 127, 66: 130, 64: 133, 62: 136, 60: 139, 50: 143, 40: 147, 30: 151, 20: 155, 10: 159},
+}
+
+# ============================================================
+# 各年级权重
+# ============================================================
+# 1-2年级：BMI 15%, 肺活量 15%, 50米跑 20%, 坐位体前屈 30%, 跳绳 20%
+# 3-4年级：BMI 15%, 肺活量 15%, 50米跑 20%, 坐位体前屈 20%, 仰卧起坐 10%, 跳绳 20%
+# 5-6年级：BMI 15%, 肺活量 15%, 50米跑 20%, 坐位体前屈 10%, 仰卧起坐 10%, 跳绳 20%, 往返跑 10%
+
+WEIGHTS = {
+    1: {"bmi": 0.15, "lung": 0.15, "run50": 0.20, "sit_reach": 0.30, "jump_rope": 0.20},
+    2: {"bmi": 0.15, "lung": 0.15, "run50": 0.20, "sit_reach": 0.30, "jump_rope": 0.20},
+    3: {"bmi": 0.15, "lung": 0.15, "run50": 0.20, "sit_reach": 0.20, "sit_up": 0.10, "jump_rope": 0.20},
+    4: {"bmi": 0.15, "lung": 0.15, "run50": 0.20, "sit_reach": 0.20, "sit_up": 0.10, "jump_rope": 0.20},
+    5: {"bmi": 0.15, "lung": 0.15, "run50": 0.20, "sit_reach": 0.10, "sit_up": 0.10, "jump_rope": 0.20, "run8": 0.10},
+    6: {"bmi": 0.15, "lung": 0.15, "run50": 0.20, "sit_reach": 0.10, "sit_up": 0.10, "jump_rope": 0.20, "run8": 0.10},
+}
+
+# ============================================================
+# 工具函数
+# ============================================================
+
+def _lookup_higher_better(table, gender, grade, value):
+    """高优指标查分：值越大分越高"""
+    data = table["男" if gender == "男" else "女"]
+    if grade not in data:
         return 0
-    return weight / (height ** 2)
-
-def get_bmi_score(gender, grade, weight, height):   
-    # Calculate BMI
-    bmi = calculate_bmi(weight, height)
-    
-    if gender == "male" or gender == "男":
-        bmi_ranges = male_bmi_ranges
-    else:
-        bmi_ranges = female_bmi_ranges
-    
-    # Get the BMI ranges for the given grade
-    if grade not in bmi_ranges:
-        return "Invalid grade"
-    
-    grade_ranges = bmi_ranges[grade]
-    
-    # Determine the score based on BMI
-    if bmi <= grade_ranges['underweight']:
-        return 80  # Underweight
-    elif grade_ranges['normal'][0] <= bmi <= grade_ranges['normal'][1]:
-        return 100  # Normal
-    elif grade_ranges['overweight'][0] <= bmi <= grade_ranges['overweight'][1]:
-        return 80  # Overweight
-    elif bmi >= grade_ranges['obese']:
-        return 60  # Obese
-    else:
-        return "Unable to determine score"
-
-def get_lung_capacity_score(gender, grade, capacity):    
-    # Get the capacity ranges for the given grade
-    if gender == "male" or gender == "男":
-        capacity_ranges = male_capacity_ranges
-    else:
-        capacity_ranges = female_capacity_ranges
-    
-    if grade not in capacity_ranges:
-        return "Invalid grade"
-    
-    grade_capacities = capacity_ranges[grade]
-    
-    # Determine the score based on capacity
-    for score, min_capacity in sorted(grade_capacities.items(), reverse=True):
-        if capacity >= min_capacity:
+    for score, threshold in sorted(data[grade].items(), reverse=True):
+        if value >= threshold:
             return score
-    
-    return "Unable to determine score"
-
-def get_50m_run_score(gender, grade, run_time):  
-    # Get the run time ranges for the given grade
-    if gender == "male" or gender == "男":
-        run_time_ranges = male_run_time_ranges
-    else:
-        run_time_ranges = female_run_time_ranges
-    
-    if grade not in run_time_ranges:
-        return "Invalid grade"
-    
-    grade_run_times = run_time_ranges[grade]
-    
-    # Determine the score based on run time
-    for score, max_time in sorted(grade_run_times.items(), reverse=True):
-        if run_time <= max_time:
-            return score
-    
-    return "Unable to determine score"
-
-def get_sit_and_reach_score(gender, grade, reach_value): 
-    # Get the reach value ranges for the given grade
-    if gender == "male" or gender == "男":
-        reach_ranges = male_reach_ranges
-    else:
-        reach_ranges = female_reach_ranges
-    
-    if grade not in reach_ranges:
-        return "Invalid grade"
-    
-    grade_reach_values = reach_ranges[grade]
-    
-    # Determine the score based on reach value
-    for score, min_reach in sorted(grade_reach_values.items(), reverse=True):
-        if reach_value >= min_reach:
-            return score
-    
-    return "Unable to determine score"
-
-def get_jump_rope_score(gender, grade, jump_count):    
-    # Get the jump rope score ranges for the given grade
-    if gender == "male" or gender == "男":
-        jump_score_ranges = male_jump_score_ranges
-    else:
-        jump_score_ranges = female_jump_score_ranges
-    
-    if grade not in jump_score_ranges:
-        return "Invalid grade"
-    
-    grade_jump_scores = jump_score_ranges[grade]
-    
-    # Determine the standard score based on jump count
-    for score, min_jump in sorted(grade_jump_scores.items(), reverse=True):
-        if jump_count >= min_jump:
-            return score
-    
-    return "Unable to determine score"
-
-def get_jump_rope_bonus(gender, grade, jump_count):
-    # Get the bonus ranges for the given grade
-    if gender == "male" or gender == "男":
-        bonus_ranges = male_bonus_ranges
-        jump_score_ranges = male_jump_score_ranges
-    else:
-        bonus_ranges = female_bonus_ranges
-        jump_score_ranges = female_jump_score_ranges
-    
-    if grade not in bonus_ranges:
-        return "Invalid grade"
-    
-    grade_bonus = bonus_ranges[grade]
-    grade_jump_scores = jump_score_ranges[grade]
-    
-    jump_rope_score = get_jump_rope_score(gender, grade, jump_count)
-    if isinstance(jump_rope_score, int) and jump_rope_score >= 100:
-        min_jump_for_100 = grade_jump_scores[100]
-        extra_jumps = jump_count - min_jump_for_100
-    else:
-        return 0
-    
-    # Determine the bonus based on the score exceeding 100
-    for bonus, min_jumps in sorted(grade_bonus.items(), reverse=True):
-        if extra_jumps >= min_jumps:
-            return bonus
-    
     return 0
 
-def get_sit_up_score(gender, grade, sit_up_count):
-    # Get the sit-up score ranges for the given grade
-    if gender == "male" or gender == "男":
-        sit_up_score_ranges = male_sit_up_score_ranges
-    else:
-        sit_up_score_ranges = female_sit_up_score_ranges
-    
-    if grade not in sit_up_score_ranges:
-        return "Invalid grade"
-    
-    grade_sit_up_scores = sit_up_score_ranges[grade]
-    
-    # Determine the score based on sit-up count
-    for score, min_sit_up in sorted(grade_sit_up_scores.items(), reverse=True):
-        if sit_up_count >= min_sit_up:
+
+def _lookup_lower_better(table, gender, grade, value):
+    """低优指标查分：值越小分越高"""
+    data = table["男" if gender == "男" else "女"]
+    if grade not in data:
+        return 0
+    for score, threshold in sorted(data[grade].items(), reverse=True):
+        if value <= threshold:
             return score
-    
-    return "Unable to determine score"
+    return 0
 
-def get_50m_8r_run_score(gender, grade, run_time):  
-    # Get the run score ranges for the given grade
-    if gender == "male" or gender == "男":
-        run_score_ranges = male_run_score_ranges
+
+# ============================================================
+# 各项评分函数
+# ============================================================
+
+def get_bmi_score(gender, grade, weight, height):
+    """计算BMI并返回得分"""
+    if height <= 0 or weight <= 0:
+        return 0
+    bmi = weight / (height ** 2)
+    table = MALE_BMI if gender == "男" else FEMALE_BMI
+    if grade not in table:
+        return 0
+    r = table[grade]
+    if r["normal"][0] <= bmi <= r["normal"][1]:
+        return 100
+    elif bmi <= r["underweight_max"]:
+        return 80
+    elif r["overweight"][0] <= bmi <= r["overweight"][1]:
+        return 80
+    elif bmi >= r["obese_min"]:
+        return 60
+    return 0
+
+
+def get_lung_score(gender, grade, value):
+    """肺活量评分"""
+    return _lookup_higher_better({"男": MALE_LUNG, "女": FEMALE_LUNG}, gender, grade, value)
+
+
+def get_run50_score(gender, grade, seconds):
+    """50米跑评分"""
+    return _lookup_lower_better({"男": MALE_RUN50, "女": FEMALE_RUN50}, gender, grade, seconds)
+
+
+def get_sit_reach_score(gender, grade, cm):
+    """坐位体前屈评分"""
+    return _lookup_higher_better({"男": MALE_SIT_REACH, "女": FEMALE_SIT_REACH}, gender, grade, cm)
+
+
+def get_jump_rope_score(gender, grade, count):
+    """一分钟跳绳评分（不含加分）"""
+    return _lookup_higher_better({"男": MALE_JUMP_ROPE, "女": FEMALE_JUMP_ROPE}, gender, grade, count)
+
+
+def get_jump_rope_bonus(gender, grade, count):
+    """一分钟跳绳加分"""
+    table = MALE_JUMP_ROPE if gender == "男" else FEMALE_JUMP_ROPE
+    if grade not in table:
+        return 0
+    score = get_jump_rope_score(gender, grade, count)
+    if score < 100:
+        return 0
+    full_mark_count = table[grade][100]
+    extra = count - full_mark_count
+    if extra <= 0:
+        return 0
+    for bonus, threshold in sorted(JUMP_ROPE_BONUS.items(), reverse=True):
+        if extra >= threshold:
+            return bonus
+    return 0
+
+
+def get_sit_up_score(gender, grade, count):
+    """仰卧起坐评分（仅3-6年级）"""
+    return _lookup_higher_better({"男": MALE_SIT_UP, "女": FEMALE_SIT_UP}, gender, grade, count)
+
+
+def get_run8_score(gender, grade, total_seconds):
+    """50米×8往返跑评分（仅5-6年级），输入总秒数"""
+    return _lookup_lower_better({"男": MALE_RUN8, "女": FEMALE_RUN8}, gender, grade, total_seconds)
+
+
+def get_grade_label(score):
+    """根据得分返回等级"""
+    if score >= 90:
+        return "优秀 🏆"
+    elif score >= 80:
+        return "良好 👍"
+    elif score >= 60:
+        return "及格 ✅"
     else:
-        run_score_ranges = female_run_score_ranges
-    
-    if grade not in run_score_ranges:
-        return "Invalid grade"
-    
-    grade_run_scores = run_score_ranges[grade]
-    
-    # Convert run_time to seconds for comparison
-    minutes, seconds = map(lambda x: int(x.strip('"')), run_time.split("'"))
-    run_time_seconds = minutes * 60 + seconds
-    
-    # Determine the score based on run time
-    for score, max_time_str in sorted(grade_run_scores.items(), reverse=True):
-        max_minutes, max_seconds = map(lambda x: int(x.strip('"')), max_time_str.split("'"))
-        max_time_seconds = max_minutes * 60 + max_seconds
-        if run_time_seconds <= max_time_seconds:
-            return score
-    
-    return "Unable to determine score"
+        return "不及格 ❌"
 
 
-def get_total_score(grade, bmi_score, lung_capacity_score, run_50m_score, sit_reach_score, sit_up_score, jump_rope_score, run_8r_score=0):
-    if grade >= 5:
-        total_score = bmi_score * 0.15 + lung_capacity_score * 0.15 + run_50m_score * 0.2 + sit_reach_score * 0.1 + sit_up_score * 0.1 + jump_rope_score * 0.2 + run_8r_score * 0.1
-    else:
-        total_score = bmi_score * 0.15 + lung_capacity_score * 0.15 + run_50m_score * 0.2 + sit_reach_score * 0.2 + sit_up_score * 0.1 + jump_rope_score * 0.2
-    return total_score
+def get_total_score(grade, scores):
+    """
+    计算加权总分。
+    scores: dict，键为项目名（bmi/lung/run50/sit_reach/sit_up/jump_rope/run8），值为单项得分
+    """
+    w = WEIGHTS.get(grade, {})
+    total = 0
+    for item, weight in w.items():
+        total += scores.get(item, 0) * weight
+    return round(total, 1)
